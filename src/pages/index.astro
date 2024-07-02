@@ -1,0 +1,244 @@
+---
+import "/theme.css";
+import Layout from "@layouts/Layout.astro";
+---
+
+<Layout>
+    <header class="primary-container">
+        <nav>
+            <button class="circle transparent">
+                <i class="extra">menu</i>
+            </button>
+            <h5 class="max center-align">Kiss FM</h5>
+            <button class="circle transparent large">
+                <i class="extra">settings</i>
+            </button>
+        </nav>
+    </header>
+    <main id="main" class="middle-align responsive">
+        <article
+            id="player"
+            class="center small-height"
+            style="background-color: #d52f31;
+                       border-radius: 8px;
+                       width: 320px;
+                       box-shadow: 0 18px 5px 0 rgb(190, 39, 42);
+                       position: relative;"
+        >
+            <div id="record" class="record center-align small-elevate">
+                <div
+                    class="label circle large orange"
+                    style="position: absolute;"
+                >
+                </div>
+                <div
+                    class="circle"
+                    style="position: absolute; width:15px; height:15px; background-color: #181312"
+                >
+                </div>
+            </div>
+
+            <div
+                id="needle"
+                style="position: absolute;
+                            top: 25px;
+                            right: 95px;"
+            >
+                <div
+                    class="circle small"
+                    style="position: absolute;
+                               top: -16px;
+                               left: -16px;
+                               background-color: #181312;"
+                >
+                    <div
+                        class="no-round white center"
+                        style="position: absolute;
+                            top: 31px;
+                            width: 8px;
+                            height:90px;
+                            "
+                    >
+                    </div>
+                    <div
+                        class="no-round white center"
+                        style="position: absolute;
+                            top: 115px;
+                            left: 3.25px;
+                            width: 8px;
+                            height:30px;
+                            transform: rotate(40deg);"
+                    >
+                    </div>
+                    <div
+                        class="no-round grey center"
+                        style="position: absolute;
+                            top: 134px;
+                            left: -10px;
+                            width: 16px;
+                            height: 16px;
+                            transform: rotate(40deg);"
+                    >
+                    </div>
+                </div>
+            </div>
+
+            <button
+                id="play-button"
+                class="power no-margin circle grey small-elevate"
+                style="position: absolute; bottom:10px; right:10px;"
+                >Play
+            </button>
+        </article>
+
+        <audio id="audio-stream">
+            <!-- <source
+                src="https://adhandler.kissfmradio.cires21.com/get_link?url=https://bbkissfm.kissfmradio.cires21.com/bbkissfm.mp3"
+                type="audio/mpeg"
+            /> -->
+        </audio>
+    </main>
+
+    <dialog
+        id="loading-screen"
+        class="active max middle-align primary-container"
+    >
+        <div class="center center-align">
+            <h1 id="welcome-message" class="white-text">Hola!</h1>
+        </div>
+    </dialog>
+</Layout>
+
+<script>
+    var tl = anime.timeline();
+    tl.add({
+        targets: "#welcome-message",
+        scale: [14, 1],
+        opacity: [0, 1],
+        easing: "easeOutCirc",
+        duration: 800,
+        delay: (el, i) => 800 * i,
+    });
+    tl.add({
+        targets: "#welcome-message",
+        opacity: 0,
+        easing: "easeOutExpo",
+        duration: 1000,
+        delay: 1000,
+        complete: function (anim) {
+            document.getElementById("loading-screen").remove();
+        },
+    });
+    tl.add({
+        targets: "#main",
+        opacity: [0, 1],
+        direction: "alternate",
+        easing: "easeOutSine",
+        duration: 1000,
+    });
+
+    var state = 0;
+    var audioElement = document.getElementById("audio-stream");
+    var play_button = document.getElementById("play-button");
+
+    document.addEventListener("DOMContentLoaded", function () {
+        play_button.addEventListener("click", function () {
+            if (state === 0) {
+                anime({
+                    targets: "#needle",
+                    rotate: 25,
+                    duration: 800,
+                    easing: "easeOutSine",
+                    complete: function (anim) {
+                        audioElement.play();
+                        anime({
+                            targets: "#record",
+                            rotate: 360,
+                            duration: 1500,
+                            loop: true,
+                            elasticity: 0,
+                            easing: "linear",
+                        });
+                    },
+                });
+
+                state = 1;
+            } else {
+                audioElement.pause();
+                state = 0;
+            }
+        });
+    });
+
+    document.body.style.setProperty("--primary-container", "#d52f31");
+</script>
+
+<style>
+    .record {
+        height: 175px;
+        width: 175px;
+        background-color: #181312;
+        border-radius: 50%;
+        position: relative;
+        top: -5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .record:before {
+        content: "";
+        position: absolute;
+        height: 135px;
+        width: 135px;
+        border: 5px solid transparent;
+        border-top: 5px solid #2c2424;
+        border-bottom: 5px solid #2c2424;
+        border-radius: 50%;
+    }
+    .record:after {
+        content: "";
+        position: absolute;
+        height: 95px;
+        width: 95px;
+        border: 5px solid transparent;
+        border-top: 5px solid #2c2424;
+        border-bottom: 5px solid #2c2424;
+        border-radius: 50%;
+    }
+
+    .stick {
+        height: 90px;
+        width: 6px;
+        background-color: #ffffff;
+
+        transition: 1s;
+        transform-origin: top;
+    }
+    .play {
+        transform: rotate(30deg);
+        transform-origin: top;
+        transition: 1s;
+    }
+    .stick:before {
+        content: "";
+        height: 40px;
+        width: 6px;
+        background-color: #ffffff;
+        position: absolute;
+        transform: rotate(30deg);
+        bottom: -34px;
+        right: 9px;
+    }
+    .stick:after {
+        content: "";
+        position: absolute;
+        height: 0;
+        width: 10px;
+        border-top: 18px solid #b2aea6;
+        border-left: 2px solid transparent;
+        border-right: 2px solid transparent;
+        transform: rotate(30deg);
+        top: 108px;
+        right: 12.5px;
+    }
+</style>
