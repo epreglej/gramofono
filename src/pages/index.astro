@@ -10,7 +10,7 @@ import Layout from "@layouts/Layout.astro";
                 <i class="extra">menu</i>
             </button>
             <h5 class="max center-align">Kiss FM</h5>
-            <button class="circle transparent large">
+            <button class="circle transparent large" data-ui="#settings-menu">
                 <i class="extra">settings</i>
             </button>
         </nav>
@@ -107,6 +107,24 @@ import Layout from "@layouts/Layout.astro";
             <h1 id="welcome-message" class="white-text">Hola!</h1>
         </div>
     </dialog>
+
+    <div class="overlay blur"></div>
+    <dialog
+        id="settings-menu"
+        class="center middle"
+        style="margin-top: -100px;"
+    >
+        <h5>Settings</h5>
+        <div class="field border prefix">
+            <i id="color-preview" class="border circle"></i>
+            <input placeholder="Select a color" readonly />
+            <input id="color-picker" type="color" />
+        </div>
+        <nav class="right-align no-space">
+            <button class="transparent link">Cancel</button>
+            <button class="transparent link">Confirm</button>
+        </nav>
+    </dialog>
 </Layout>
 
 <script>
@@ -123,7 +141,7 @@ import Layout from "@layouts/Layout.astro";
         targets: "#welcome-message",
         opacity: 0,
         easing: "easeOutExpo",
-        duration: 1000,
+        duration: 1,
         delay: 1000,
         complete: function (anim) {
             document.getElementById("loading-screen").remove();
@@ -134,7 +152,7 @@ import Layout from "@layouts/Layout.astro";
         opacity: [0, 1],
         direction: "alternate",
         easing: "easeOutSine",
-        duration: 1000,
+        duration: 1,
     });
 
     var state = 0;
@@ -169,6 +187,15 @@ import Layout from "@layouts/Layout.astro";
             }
         });
     });
+
+    document
+        .getElementById("color-picker")
+        .addEventListener("change", function () {
+            var newColor = this.value;
+
+            var chipElement = document.getElementById("color-preview");
+            chipElement.style.backgroundColor = newColor;
+        });
 
     document.body.style.setProperty("--primary-container", "#d52f31");
 </script>
